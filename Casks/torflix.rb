@@ -2,18 +2,31 @@ cask "torflix" do
   arch arm: "arm64", intel: "x64"
 
   version "0.3.0"
-  sha256 arm:   "561d71dc0b11623c8b3d772e32c5f2e4699ed4184b8639301cfececde82912cc",
-         intel: "f8c7aa84c0dcd2ad0d55ef7eb94376e4e2a70339143b01fd60e8d5bddbc6c3df"
+  sha256 arm:   "a1207650d14e204210b1f4a541d735a04f4db45fd33e5dfd6036ac9ab22cf0a3",
+         intel: "ef587d039ee36c67916deb56db5f1262cf8b797c5b3f24a04949bfac8591de29"
 
-  url "https://github.com/gary23w/torflix/releases/download/v#{version}/Torflix-#{version}-mac-#{arch}-r1.dmg"
+  url "https://github.com/gary23w/torflix/releases/download/v#{version}/Torflix-#{version}-mac-#{arch}.dmg"
   name "Torflix"
-  desc "Torrent video streaming and downloads"
+  desc "Stream torrent videos while they download"
   homepage "https://github.com/gary23w/torflix"
 
   livecheck do
-    url :homepage
+    url :url
     strategy :github_latest
   end
 
+  depends_on macos: ">= :monterey"
+
   app "Torflix.app"
+
+  zap trash: [
+    "~/Library/Application Support/Torflix",
+    "~/Library/Preferences/io.torflix.app.plist",
+    "~/Library/Saved Application State/io.torflix.app.savedState",
+  ]
+
+  caveats <<~EOS
+    Torflix is not notarized by Apple, so macOS blocks its first start.
+    Open System Settings > Privacy & Security and click Open Anyway.
+  EOS
 end

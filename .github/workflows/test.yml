@@ -1,0 +1,40 @@
+name: Install test
+
+# Installs the cask from this tap on Apple silicon and Intel, checks the app's ad-hoc
+# signature, starts it in its self-test (stopped once the window is up), then removes it.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Use this checkout as the gary23w/torflix tap
+        run: |
+          taps="$(brew --repository)/Library/Taps/gary23w"
+          mkdir -p "$taps"
+          ln -s "$GITHUB_WORKSPACE" "$taps/homebrew-torflix"
+      - run: brew style gary23w/torflix
+      - run: brew audit --cask --strict --online gary23w/torflix/torflix
+      - run: brew install --cask gary23w/torflix/torflix
+      - name: Signature and start
+        env:
+          TORRENTPLAYER_SMOKE_STEPS: ready
+        run: |
+          codesign --verify --deep --strict --verbose=2 /Applications/Torflix.app
+          codesign -dv /Applications/Torflix.app 2>&1 | grep Signature=adhoc
+          TORRENTPLAYER_SMOKE_OUT="$RUNNER_TEMP/shots" /Applications/Torflix.app/Contents/MacOS/Torflix --smoke
+      - name: Remove it
+        run: |
+          brew uninstall --cask --zap gary23w/torflix/torflix
+          test ! -e /Applications/Torflix.app
