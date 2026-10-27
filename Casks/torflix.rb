@@ -1,9 +1,9 @@
 cask "torflix" do
   arch arm: "arm64", intel: "x64"
 
-  version "0.3.0"
-  sha256 arm:   "a1207650d14e204210b1f4a541d735a04f4db45fd33e5dfd6036ac9ab22cf0a3",
-         intel: "ef587d039ee36c67916deb56db5f1262cf8b797c5b3f24a04949bfac8591de29"
+  version "0.3.1"
+  sha256 arm:   "ba1565a8155bf2abc593b27901485acfe4e12b08ca94ea2c5e658f079601b3e6",
+         intel: "4637d0cf38f389ce26b9f0e12776b043ca01f632f0bcc2eb3e33d112cd08bf82"
 
   url "https://github.com/gary23w/torflix/releases/download/v#{version}/Torflix-#{version}-mac-#{arch}.dmg"
   name "Torflix"
